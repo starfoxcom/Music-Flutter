@@ -19,10 +19,13 @@ class _DashboardViewState extends State<DashboardView> {
         title: const Text('Dashboard'),
         centerTitle: true,
       ),
-      body: ListView.builder(
+      body:
+          // Build song list
+          ListView.builder(
         itemCount: utils.songs.length,
         itemBuilder: (context, index) {
           String playState = 'Play';
+          // Build card for each song or return empty space
           return utils.songsMetadata[index].trackName != null
               ? Card(
                   clipBehavior: Clip.antiAlias,
@@ -33,6 +36,7 @@ class _DashboardViewState extends State<DashboardView> {
                       Flexible(
                         child: Row(
                           children: [
+                            // Song album art
                             SizedBox(
                               width: 100,
                               height: 100,
@@ -41,6 +45,7 @@ class _DashboardViewState extends State<DashboardView> {
                                 fit: BoxFit.cover,
                               ),
                             ),
+                            // Song info
                             Flexible(
                               child: Padding(
                                 padding:
@@ -61,6 +66,7 @@ class _DashboardViewState extends State<DashboardView> {
                           ],
                         ),
                       ),
+                      // Play/pause button
                       ActionButtonComponent(
                         borderRadius: 25,
                         labelText: utils.currentSongIndex != index

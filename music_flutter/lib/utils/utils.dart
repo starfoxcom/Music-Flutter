@@ -9,12 +9,14 @@ List<FileSystemEntity> songs = [];
 List<Metadata> songsMetadata = [];
 int? currentSongIndex;
 
+// Find root directory
 Directory findRoot(Directory? entity) {
   final Directory parent = entity!.parent;
   if (parent.path == '/storage/emulated/0') return parent;
   return findRoot(parent);
 }
 
+// Get all songs in root directory
 getAndroidSongs() async {
   if (await Permission.storage.request().isGranted) {
     final d1 = Directory('/storage/emulated/0/');
