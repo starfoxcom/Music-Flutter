@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'package:flutter_media_metadata/flutter_media_metadata.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:music_flutter/models/track.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 final player = AssetsAudioPlayer();
 
-List<FileSystemEntity> songs = [];
-List<Metadata> songsMetadata = [];
+List<Track> songs = [];
 int? currentSongIndex;
 
 // Find root directory
@@ -28,8 +28,7 @@ getAndroidSongs() async {
         var metadata = await MetadataRetriever.fromFile(File(path));
         var duration = Duration(milliseconds: metadata.trackDuration!);
         if (duration.inSeconds > 60) {
-          songs.add(entity);
-          songsMetadata.add(metadata);
+          songs.add(Track(metadata, path));
         }
       }
     }
