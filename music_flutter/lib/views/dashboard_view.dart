@@ -25,103 +25,48 @@ class _DashboardViewState extends State<DashboardView> {
           ListView.builder(
         itemCount: utils.songs.length,
         itemBuilder: (context, index) {
-          String playState = 'Play';
           // Build card for each song or return empty space
-          return utils.songsMetadata[index].trackName != null
-              ? Card(
-                  clipBehavior: Clip.antiAlias,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(100.0)),
-                  child: Row(
-                    children: [
-                      Flexible(
-                        child: Row(
-                          children: [
-                            // Song album art
-                            SizedBox(
-                              width: 100,
-                              height: 100,
-                              child: Image.memory(
-                                utils.songsMetadata[index].albumArt!,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            // Song info
-                            Flexible(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      utils.songsMetadata[index].trackName!,
-                                      textScaleFactor: 1.5,
-                                    ),
-                                    Text(utils.songsMetadata[index]
-                                        .trackArtistNames![0])
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      // Play/pause button
-                      utils.player.builderIsPlaying(
-                          builder: (context, isPlaying) {
-                        return ActionButtonComponent(
-                          borderRadius: 25,
-                          labelText: utils.currentSongIndex != index
-                              ? playState
-                              : isPlaying
-                                  ? 'Stop'
-                                  : playState,
-                          horizontalPadding: 10,
-                          onPressedCallback: () {
-                            if (isPlaying) {
-                              if (utils.currentSongIndex != index) {
-                                utils.currentSongIndex = index;
-                                utils.player.open(
-                                    Audio.file(utils.songs[index].path),
-                                    showNotification: true);
-                                utils.player.play();
-                                setState(() {
-                                  playState = 'Stop';
-                                });
-                              } else {
-                                utils.player.stop();
-                                setState(() {
-                                  playState = 'Play';
-                                });
-                              }
-                            } else {
-                              if (utils.currentSongIndex != index) {
-                                utils.currentSongIndex = index;
-                                utils.player.open(
-                                    Audio.file(utils.songs[index].path),
-                                    showNotification: true);
-                                utils.player.play();
-                                setState(() {
-                                  playState = 'Stop';
-                                });
-                              } else {
-                                utils.player.play();
-                                setState(() {
-                                  playState = 'Stop';
-                                });
-                              }
-                            }
-                          },
-                          onLongPressedCallback: () {},
-                        );
-                      }),
-                    ],
+          return utils.songs[index].metadata.trackName != null
+              ? ListTile(
+                  leading: CircleAvatar(
+                      backgroundImage:
+                          MemoryImage(utils.songs[index].metadata.albumArt!)),
+                  title: Text(
+                    utils.songs[index].metadata.trackName!,
+                    overflow: TextOverflow.fade,
+                    maxLines: 1,
+                    softWrap: false,
                   ),
-                )
+                  subtitle: Text(
+                    (utils.songs[index].metadata.trackDuration != null
+                            ? (Duration(
+                                        milliseconds: utils.songs[index]
+                                            .metadata.trackDuration!)
+                                    .label +
+                                ' • ')
+                            : '0:00 • ') +
+                        utils.songs[index].metadata.albumName! +
+                        ' • ' +
+                        utils.songs[index].metadata.trackArtistNames!
+                            .take(2)
+                            .join(', '),
+                    overflow: TextOverflow.fade,
+                    maxLines: 1,
+                    softWrap: false,
+                  ))
               : Container();
         },
       ),
     ));
+  }
+}
+
+extension on Duration {
+  String get label {
+    int minutes = inSeconds ~/ 60;
+    String seconds = inSeconds - (minutes * 60) > 9
+        ? '${inSeconds - (minutes * 60)}'
+        : '0${inSeconds - (minutes * 60)}';
+    return '$minutes:$seconds';
   }
 }
