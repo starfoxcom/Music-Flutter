@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:flutter_media_metadata/flutter_media_metadata.dart';
-import 'package:just_audio/just_audio.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-final player = AudioPlayer();
+final player = AssetsAudioPlayer();
 
 List<FileSystemEntity> songs = [];
 List<Metadata> songsMetadata = [];

@@ -1,3 +1,4 @@
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:music_flutter/utils/utils.dart' as utils;
@@ -67,40 +68,54 @@ class _DashboardViewState extends State<DashboardView> {
                         ),
                       ),
                       // Play/pause button
-                      ActionButtonComponent(
-                        borderRadius: 25,
-                        labelText: utils.currentSongIndex != index
-                            ? playState
-                            : utils.player.playing
-                                ? 'Stop'
-                                : playState,
-                        horizontalPadding: 10,
-                        onPressedCallback: () {
-                          if (utils.player.playing) {
-                            if (utils.currentSongIndex != index) {
-                              utils.currentSongIndex = index;
-                              utils.player.setFilePath(utils.songs[index].path);
-                              utils.player.play();
-                              setState(() {
-                                playState = 'Stop';
-                              });
+                      utils.player.builderIsPlaying(
+                          builder: (context, isPlaying) {
+                        return ActionButtonComponent(
+                          borderRadius: 25,
+                          labelText: utils.currentSongIndex != index
+                              ? playState
+                              : isPlaying
+                                  ? 'Stop'
+                                  : playState,
+                          horizontalPadding: 10,
+                          onPressedCallback: () {
+                            if (isPlaying) {
+                              if (utils.currentSongIndex != index) {
+                                utils.currentSongIndex = index;
+                                utils.player.open(
+                                    Audio.file(utils.songs[index].path),
+                                    showNotification: true);
+                                utils.player.play();
+                                setState(() {
+                                  playState = 'Stop';
+                                });
+                              } else {
+                                utils.player.stop();
+                                setState(() {
+                                  playState = 'Play';
+                                });
+                              }
                             } else {
-                              utils.player.stop();
-                              setState(() {
-                                playState = 'Play';
-                              });
+                              if (utils.currentSongIndex != index) {
+                                utils.currentSongIndex = index;
+                                utils.player.open(
+                                    Audio.file(utils.songs[index].path),
+                                    showNotification: true);
+                                utils.player.play();
+                                setState(() {
+                                  playState = 'Stop';
+                                });
+                              } else {
+                                utils.player.play();
+                                setState(() {
+                                  playState = 'Stop';
+                                });
+                              }
                             }
-                          } else {
-                            utils.currentSongIndex = index;
-                            utils.player.setFilePath(utils.songs[index].path);
-                            utils.player.play();
-                            setState(() {
-                              playState = 'Stop';
-                            });
-                          }
-                        },
-                        onLongPressedCallback: () {},
-                      )
+                          },
+                          onLongPressedCallback: () {},
+                        );
+                      }),
                     ],
                   ),
                 )
